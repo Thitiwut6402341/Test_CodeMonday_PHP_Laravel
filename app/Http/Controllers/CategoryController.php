@@ -161,7 +161,7 @@ class CategoryController extends BaseController
 
             return response()->json([
                 "status" => 'success',
-                "message" => "Get main category by ID successfully",
+                "message" => "Get category by ID successfully",
                 "data" =>  $category,
             ], 200);
         } catch (\Exception $e) {
