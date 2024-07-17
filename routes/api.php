@@ -19,15 +19,13 @@ Route::get('/', function () {
 });
 
 
-Route::prefix('main-category')->controller(CategoryController::class)->group(function () {
+Route::prefix('category')->controller(CategoryController::class)->group(function () {
     Route::post('/create-standalone', 'createCategoryStandAlone');
-    Route::get('/get', 'getMainCategory');
-    Route::get('/get-all', 'getAllMainCategory');
-});
-
-
-Route::prefix('sub-category')->controller(CategoryController::class)->group(function () {
     Route::post('/create-leaf', 'createSubCategory');
+    Route::get('/get-stand-alone', 'getStanAloneCategory');
+    Route::get('/get-tree', 'getTreeCategory');
+    Route::get('/get-all', 'getAllMainCategory');
+    Route::get('/get-array', 'getArrayCategory');
 });
 
 

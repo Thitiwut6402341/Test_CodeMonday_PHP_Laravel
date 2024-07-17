@@ -3,14 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
-use App\Models\SubCategory;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\DB;
 
 
 class CategoryController extends BaseController
@@ -18,13 +16,121 @@ class CategoryController extends BaseController
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
 
-    //* [GET] /main-category/get
-    public function getMainCategory(Request $request)
+    //* [POST] /category/create-standalone
+    public function createCategoryStandAlone(Request $request)
+    {
+        try {
+            $validator = Validator::make(
+                $request->all(),
+                [
+                    "category_name"   => ["required", "string"],
+                ]
+            );
+
+            if ($validator->fails()) {
+                return response()->json([
+                    "status" => "error",
+                    "message" => "Bad request",
+                    "data" => [
+                        [
+                            "validator" => $validator->errors()
+                        ]
+                    ]
+                ], 400);
+            }
+
+            //? check category already exists
+            $checkDataMain = Category::where('category_name', $request->category_name)->get();
+
+            if (count($checkDataMain) !== 0) return response()->json([
+                "status" => "error",
+                "message" => "The category is already in system",
+                "data" => [],
+            ], 400);
+
+            $category = Category::create(
+                [
+                    "category_name"       => $request->category_name,
+                ]
+            );
+
+            return response()->json([
+                "status" => 'success',
+                "message" => "Created stand alone category successfully",
+                "data" =>  [$category],
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                "status" => "error",
+                "message" => $e->getMessage(),
+                "data" => [],
+            ], 500);
+        }
+    }
+
+
+    //* [POST] /sub-category/create-leaf
+    public function createSubCategory(Request $request)
+    {
+        try {
+            $validator = Validator::make(
+                $request->all(),
+                [
+                    "parent_id"  => ["required", "uuid"],
+                    "category_name"   => ["required", "string"],
+                ]
+            );
+
+            if ($validator->fails()) {
+                return response()->json([
+                    "status" => "error",
+                    "message" => "Bad request",
+                    "data" => [
+                        [
+                            "validator" => $validator->errors()
+                        ]
+                    ]
+                ], 400);
+            }
+
+            $document = [
+                "parent_id"         => $request->parent_id,
+                "category_name"     => $request->category_name,
+            ];
+
+            $checkData = Category::where('category_id', $request->parent_id)->get();
+
+            if (count($checkData) === 0) return response()->json([
+                "status" => "error",
+                "message" => "Category id does not found",
+                "data" => [],
+            ], 400); {
+            }
+
+
+            $category = Category::create($document);
+
+            return response()->json([
+                "status" => 'success',
+                "message" => "Created sub category successfully",
+                "data" =>  [$category],
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                "status" => "error",
+                "message" => $e->getMessage(),
+                "data" => [],
+            ], 500);
+        }
+    }
+
+    //* [GET] /category/get-stand-alone
+    public function getStanAloneCategory(Request $request)
     {
         try {
 
             $rules = [
-                "main_category_id"   => ["required", "uuid"],
+                "category_id"   => ["required", "uuid"],
             ];
 
             $validator = Validator::make($request->all(), $rules);
@@ -42,7 +148,16 @@ class CategoryController extends BaseController
                 ], 400);
             }
 
-            $category = Category::select('*')->where('main_category_id', $request->main_category_id)->get();
+            $category = Category::select('*')->where('category_id', $request->category_id)->get();
+
+            if (count($category) === 0) {
+                return response()->json([
+                    "status" => "error",
+                    "message" => "Category not found",
+                    "data" => [],
+                ], 404);
+            }
+
 
             return response()->json([
                 "status" => 'success',
@@ -58,7 +173,65 @@ class CategoryController extends BaseController
         }
     }
 
-    //* [GET] /main-category/get-all
+    //* [GET] /category/get-tree
+    public function getTreeCategory(Request $request)
+    {
+        try {
+
+            $rules = [
+                "category_id"   => ["required", "uuid"],
+            ];
+
+            $validator = Validator::make($request->all(), $rules);
+
+
+            if ($validator->fails()) {
+                return response()->json([
+                    "status" => "error",
+                    "message" => "Bad request",
+                    "data" => [
+                        [
+                            "validator" => $validator->errors()
+                        ]
+                    ]
+                ], 400);
+            }
+
+            $category = Category::select('*')->where('category_id', $request->category_id)->get();
+
+            if (count($category) === 0) {
+                return response()->json([
+                    "status" => "error",
+                    "message" => "Category not found",
+                    "data" => [],
+                ], 404);
+            }
+
+
+            $tree = [
+                'category_id' => $category[0]->category_id,
+                'category_name' => $category[0]->category_name,
+                'sub_category' => $category[0]->children->map(function ($child) {
+                    return $this->buildTree($child);
+                })->toArray()
+            ];
+
+
+            return response()->json([
+                "status" => 'success',
+                "message" => "Get main category by ID successfully",
+                "data" =>  [$tree],
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                "status" => "error",
+                "message" => $e->getMessage(),
+                "data" => [],
+            ], 500);
+        }
+    }
+
+    //* [GET] /category/get-all
     public function getAllMainCategory(Request $request)
     {
         try {
@@ -79,52 +252,37 @@ class CategoryController extends BaseController
         }
     }
 
-
-    //* [POST] /main-category/create-standalone
-    public function createCategoryStandAlone(Request $request)
+    //* [GET] /category/get-array
+    public function getArrayCategory(Request $request)
     {
         try {
-            $validator = Validator::make(
-                $request->all(),
-                [
-                    // "main_category_id"  => ["required", "string"],
-                    "main_category_name"   => ["required", "string"],
-                ]
-            );
 
-            if ($validator->fails()) {
-                return response()->json([
-                    "status" => "error",
-                    "message" => "Bad request",
-                    "data" => [
-                        [
-                            "validator" => $validator->errors()
-                        ]
-                    ]
-                ], 400);
+            $queryData = Category::select('category_id')->distinct()->get();
+
+            $queyDataSub = Category::select('parent_id')->distinct()->whereNotNull('parent_id')->get();
+
+
+            $dataCategory = array();
+            foreach ($queryData as $doc) {
+                $dataCategory[] = $doc->category_id;
             }
 
-            //? check category already exists
-            $checkDataMain = Category::where('main_category_name', $request->main_category_name)->get();
-
-            if (count($checkDataMain) !== 0) return response()->json([
-                "status" => "error",
-                "message" => "The category is already in system",
-                "data" => [],
-            ], 400);
-
-            $category = Category::insert(
-                [
-                    "main_category_name"       => $request->main_category_name,
-                ]
-            );
+            $dataSubCategory = array();
+            foreach ($queyDataSub as $doc) {
+                $dataSubCategory[] = $doc->parent_id;
+            }
 
 
             return response()->json([
-                "status" => 'success',
-                "message" => "Created stand alone category successfully",
-                "data" =>  $category,
-            ], 201);
+                "status" => "success",
+                "message" => "Get category array",
+                "data" => [[
+
+                    "category_id" => $dataCategory,
+                    "parent_id" => $dataSubCategory,
+
+                ]]
+            ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 "status" => "error",
@@ -133,63 +291,6 @@ class CategoryController extends BaseController
             ], 500);
         }
     }
-
-
-    //* [POST] /sub-category/create-leaf
-    public function createSubCategory(Request $request)
-    {
-        try {
-            $validator = Validator::make(
-                $request->all(),
-                [
-                    "main_category_id"  => ["required", "string"],
-                    "sub_category_name"   => ["required", "string"],
-                ]
-            );
-
-            if ($validator->fails()) {
-                return response()->json([
-                    "status" => "error",
-                    "message" => "Bad request",
-                    "data" => [
-                        [
-                            "validator" => $validator->errors()
-                        ]
-                    ]
-                ], 400);
-            }
-
-            $checkData = Category::where('main_category_id', $request->main_category_id)->get();
-
-            if ($checkData->isEmpty()) {
-                return response()->json([
-                    "status" => "error",
-                    "message" => "Main category not found",
-                    "data" => [],
-                ], 404);
-            }
-
-            $category = SubCategory::insert([
-                "main_category_id"       => $request->main_category_id,
-                "sub_category_name"     => json_encode($request->sub_category_name, JSON_UNESCAPED_UNICODE),
-
-            ]);
-
-
-            return response()->json([
-                "status" => 'success',
-                "message" => "Created sub category successfully",
-                "data" =>  $category,
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                "status" => "error",
-                "message" => $e->getMessage(),
-                "data" => [],
-            ], 500);
-        }
-    }
-
 
     //* [DELETE] /delete/category
     public function deleteCategory(Request $request)
@@ -200,6 +301,7 @@ class CategoryController extends BaseController
             ];
 
             $validator = Validator::make($request->all(), $rules);
+
             if ($validator->fails()) return response()->json([
                 "status" => "error",
                 "message" => "Bad request",
@@ -209,25 +311,20 @@ class CategoryController extends BaseController
             ], 400);
 
 
-            $checkDataMain = Category::where('main_category_id', $request->category_id)->get();
-            $checkDataSub = SubCategory::where('main_category_id', $request->category_id)->get();
+            $checkData = Category::where('category_id', $request->category_id)->get();
 
-            $resultMain = DB::table("main_categories")->where("main_category_id", $request->category_id)->delete();
-
-            $resultSub = DB::table("sub_categories")->where("main_categories", $request->category_id)->delete();
-
-            if (count($checkDataSub)  === 0 || count($checkDataMain) === 0) return response()->json([
+            if (count($checkData) === 0) return response()->json([
                 "status" => "error",
-                "message" => "category id does not exists",
+                "message" => "category id does not found",
                 "data" => [],
             ], 400);
 
-
+            $resultCategory = Category::where("category_id", $request->category_id)->delete();
 
             return response()->json([
                 "status" => "success",
                 "message" => "Deleted category successfully",
-                "data" => [],
+                "data" => $resultCategory,
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
@@ -236,5 +333,18 @@ class CategoryController extends BaseController
                 "data"      => [],
             ], 500);
         }
+    }
+
+    //? function for response sub_category in Main category
+    private function buildTree($category)
+    {
+        $tree = [
+            'category_id' => $category->category_id,
+            'category_name' => $category->category_name,
+            'sub_category' => $category->children->map(function ($child) {
+                return $this->buildTree($child);
+            })->toArray()
+        ];
+        return $tree;
     }
 }

@@ -14,11 +14,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('main_categories', function (Blueprint $table) {
+        Schema::create('categories', function (Blueprint $table) {
             // $table->id();
-            $table->uuid('main_category_id')->default(DB::raw('UUID()'));
-            // $table->string('main_category_id')->primary();
-            $table->string('main_category_name');
+            $table->uuid('category_id')->default(DB::raw('UUID()'));
+            $table->uuid('parent_id')->nullable();
+            $table->foreign('parent_id')->references('id')->on('categories')->onDelete('cascade');
+            $table->string('category_name');
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
         });
@@ -31,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('main_categories');
+        Schema::dropIfExists('categories');
     }
 };
