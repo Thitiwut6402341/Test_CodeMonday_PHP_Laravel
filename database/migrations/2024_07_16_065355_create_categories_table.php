@@ -15,7 +15,6 @@ return new class extends Migration
     public function up()
     {
         Schema::create('categories', function (Blueprint $table) {
-            // $table->id();
             $table->uuid('category_id')->default(DB::raw('UUID()'));
             $table->uuid('parent_id')->nullable();
             $table->foreign('parent_id')->references('id')->on('categories')->onDelete('cascade');
@@ -24,6 +23,7 @@ return new class extends Migration
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
         });
     }
+
 
     /**
      * Reverse the migrations.
