@@ -36,11 +36,11 @@
 
 ### API Endpoints:
 **Create main category:**
-    - Endpoint: [POST] /category/create-standalone
-    - Request Body : {
+- Endpoint: [POST] /category/create-standalone
+- Request Body : {
         "category_name":"Subjects"
     }
-    - API for create main category require 1 input key is category_name type of string. After create this generate
+- API for create main category require 1 input key is category_name type of string. After create this generate
     category_id type of uuid.
 
 **Create Sub-category:**
@@ -52,8 +52,8 @@
     - API for create sub category require 2 input parent_id type of uuid() to indicate that data which under the category_id
 
 **Get Standalone Category:**
-    - Endpoint: [GET] /category/get-stand-alone?category_id=xxxxxxxxxxxx
-    - API for get data by category_id using by Param 
+- Endpoint: [GET] /category/get-stand-alone?category_id=xxxxxxxxxxxx
+- API for get data by category_id using by Param 
 
 **Get Category Tree:**
     - Endpoint: [GET] /category/get-tree
