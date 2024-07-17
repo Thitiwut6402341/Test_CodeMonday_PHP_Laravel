@@ -30,3 +30,4 @@ Route::prefix('category')->controller(CategoryController::class)->group(function
 
 
 Route::delete('/delete/category', [CategoryController::class, 'deleteCategory']);
+Route::post('/create-nested', [CategoryController::class, 'createDeepTreeCategories']);

@@ -9,7 +9,7 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-
+use Illuminate\Support\Str;
 
 class CategoryController extends BaseController
 {
@@ -346,5 +346,66 @@ class CategoryController extends BaseController
             })->toArray()
         ];
         return $tree;
+    }
+
+
+    //? function for create tree X node categories
+    public function createDeepTreeCategories(Request $request)
+    {
+        try {
+
+            $validator = Validator::make(
+                $request->all(),
+                [
+                    "max_node"   => ["required", "integer", "min:1"],
+                ]
+            );
+
+            if ($validator->fails()) {
+                return response()->json([
+                    "status" => "error",
+                    "message" => "Bad request",
+                    "data" => [
+                        [
+                            "validator" => $validator->errors()
+                        ]
+                    ]
+                ], 400);
+            }
+
+            $maxNodes = $request->max_node;
+
+            $rootCategory = Category::create([
+                'category_name' => 'Root Category',
+            ]);
+
+            $checkCatID = Category::where('category_name', 'Root Category')->get();
+            $previousCategoryId = $checkCatID[0]->category_id;
+
+
+            for ($i = 0; $i < $maxNodes; $i++) {
+
+                $category = Category::create([
+                    'category_name' => 'Category Level ' . ($i + 1),
+                    'parent_id' => $previousCategoryId
+                ]);
+
+                $checkID = Category::where('category_name', $category->category_name)->get();
+
+                $previousCategoryId = $checkID[0]->category_id;
+            }
+
+            return response()->json([
+                "status" => 'success',
+                "message" => "Created nested categories successfully",
+                "data" => $rootCategory,
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                "status" => "error",
+                "message" => $e->getMessage(),
+                "data" => [],
+            ], 500);
+        }
     }
 }

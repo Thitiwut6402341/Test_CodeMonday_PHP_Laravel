@@ -17,7 +17,9 @@ class Category extends Model
      * @var string
      */
     protected $table = 'categories';
-
+    protected $casts = [
+        'category_id' => 'string',
+    ];
     /**
      * Indicates if the IDs are auto-incrementing.
      *
