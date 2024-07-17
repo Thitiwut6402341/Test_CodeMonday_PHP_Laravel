@@ -20,12 +20,12 @@
     - composer install
 
 3. **Set up Environment**
-    DB_CONNECTION=mysql
-    DB_HOST=127.0.0.1
-    DB_PORT=3306
-    DB_DATABASE=your_database_name
-    DB_USERNAME=your_database_username
-    DB_PASSWORD=your_database_password
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=your_database_name
+DB_USERNAME=your_database_username
+DB_PASSWORD=your_database_password
 
 4. **Run migrations**
     - php artisan migrate
