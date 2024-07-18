@@ -34,8 +34,8 @@
     - php artisan serve
 
 
-### API Endpoints:
-- **the Postman file name is "Categories_Management_API.postman_collection.json"**
+### API Endpoints: **the Postman file name is "Categories_Management_API.postman_collection.json"**
+
 **Create main category:**
 - Endpoint: [POST] /category/create-standalone
 - Request Body : {
