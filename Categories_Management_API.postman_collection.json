@@ -1,0 +1,285 @@
+{
+	"info": {
+		"_postman_id": "91720f88-5496-4491-8d61-f692e5968884",
+		"name": "Categories API [8]",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "31393187",
+		"_collection_link": "https://gold-sunset-143741.postman.co/workspace/e4cb00aa-011c-48bd-85c7-b427ad2618a8/collection/31393187-91720f88-5496-4491-8d61-f692e5968884?action=share&source=collection_link&creator=31393187"
+	},
+	"item": [
+		{
+			"name": "Create Main Category (Stand Alone)",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"category_name\":\"Subjects\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/category/create-standalone",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"category",
+						"create-standalone"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Sub Category",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"parent_id\":\"268af643-441f-11ef-a249-e02e0b23f6fd\",\r\n    \"category_name\":\"Wave and Sound\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/category/create-leaf",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"category",
+						"create-leaf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Category",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/category/get-all",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"category",
+						"get-all"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Category (Stand alone) By ID",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/category/get-stand-alone?category_id=8f03e763-441e-11ef-a249-e02e0b23f6fd",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"category",
+						"get-stand-alone"
+					],
+					"query": [
+						{
+							"key": "category_id",
+							"value": "8f03e763-441e-11ef-a249-e02e0b23f6fd"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Category (Tree) By ID",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/category/get-tree?category_id=8009a472-441e-11ef-a249-e02e0b23f6fd",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"category",
+						"get-tree"
+					],
+					"query": [
+						{
+							"key": "category_id",
+							"value": "8009a472-441e-11ef-a249-e02e0b23f6fd"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Category (Array format)",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/category/get-array",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"category",
+						"get-array"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Category",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/delete/category?category_id=9f56ed90-441e-11ef-a249-e02e0b23f6fd",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"delete",
+						"category"
+					],
+					"query": [
+						{
+							"key": "category_id",
+							"value": "9f56ed90-441e-11ef-a249-e02e0b23f6fd"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create Deep Tree X node Category",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"max_node\":2\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/create-deep-tree",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"create-deep-tree"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://127.0.0.1:8000/api",
+			"type": "string"
+		}
+	]
+}
