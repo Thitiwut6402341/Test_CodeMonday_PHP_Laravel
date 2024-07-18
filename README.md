@@ -13,7 +13,7 @@
 ## Installation
 
 1. **Clone the repository:**
-    `git clone https://github.com/Thitiwut6402341/Test_CodeMonday_PHP_Laravel.git`
+    - `git clone https://github.com/Thitiwut6402341/Test_CodeMonday_PHP_Laravel.git`
     - cd category-management-api
 
 2. **Install Dependency**
